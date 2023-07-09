@@ -56,7 +56,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/setting"
+        android:id="@+id/profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/baseline_settings_24"
             android:drawablePadding="8dp"
-            android:text="@string/setting"
+            android:text="@string/profile"
             android:textColor="@color/lavender"
             android:textSize="20sp" />
 
