@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Chen2267127</string>
+    <string name="or_sign_in_with">Or Sign in with</string>
+
+    <string name="password">password</string>
+    <string name="email">email</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="setting">Setting</string>
+    <string name="log_out">Log out</string>
+    <string name="home">Home</string>
+    <string name="contact_taskmanager_com">contact@taskmanager.com</string>
+    <string name="task_manager">Task manager</string>
+</resources>
