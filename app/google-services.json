@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "830127873489",
+    "project_id": "photoshowinandroid",
+    "storage_bucket": "photoshowinandroid.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:830127873489:android:9e08a93d198e587013d4f0",
+        "android_client_info": {
+          "package_name": "ca.xiaowei.chen2267127"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "830127873489-ce60h77coa9feagpfd0d9bt7vtf33qg7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoFaJPR-Gw0m0V7huaXkxEjAevOfpBzu0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "830127873489-ce60h77coa9feagpfd0d9bt7vtf33qg7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:830127873489:android:99a976351c21ff0513d4f0",
+        "android_client_info": {
+          "package_name": "ca.xiaowei.flickr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "830127873489-ce60h77coa9feagpfd0d9bt7vtf33qg7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoFaJPR-Gw0m0V7huaXkxEjAevOfpBzu0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "830127873489-ce60h77coa9feagpfd0d9bt7vtf33qg7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

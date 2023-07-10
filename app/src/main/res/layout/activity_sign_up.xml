@@ -14,11 +14,11 @@
         android:layout_marginTop="45dp"
         android:layout_marginBottom="30dp"
         android:gravity="center"
-        android:text="MAP 07"
+        android:text="Task Manager"
         android:textColor="@color/white"
         android:textSize="35sp" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
         android:textColorHint="@color/white" />
 
     <Button
-        android:id="@+id/registerButton"
+        android:id="@+id/signUpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

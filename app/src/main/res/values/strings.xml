@@ -13,4 +13,6 @@
     <string name="contact_taskmanager_com">contact@taskmanager.com</string>
     <string name="task_manager">Task manager</string>
     <string name="profile">Profile</string>
+    <string name="new_user_click_here">New user? Click here</string>
+    <string name="loginme">LoginMe</string>
 </resources>
