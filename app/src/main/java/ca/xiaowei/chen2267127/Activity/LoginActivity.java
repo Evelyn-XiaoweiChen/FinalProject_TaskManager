@@ -1,4 +1,4 @@
-package ca.xiaowei.chen2267127;
+package ca.xiaowei.chen2267127.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +16,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+
+import ca.xiaowei.chen2267127.R;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 TextView newUserText;
@@ -48,7 +49,7 @@ FirebaseAuth mAuth;
         newUserText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this,SignUpActivity.class);
+                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivity(intent);
                 finish();
             }

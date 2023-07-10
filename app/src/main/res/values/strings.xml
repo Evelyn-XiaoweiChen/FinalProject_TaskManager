@@ -15,4 +15,19 @@
     <string name="profile">Profile</string>
     <string name="new_user_click_here">New user? Click here</string>
     <string name="loginme">LoginMe</string>
+    <string name="n_a">N/A</string>
+    <string name="welcome">Welcome</string>
+    <string name="upcoming_task">Upcoming Task:</string>
+    <string name="total_number_of_tasks">Total number of tasks:</string>
+    <string name="edit_icon">Edit Icon</string>
+    <string name="title">Title</string>
+    <string name="category">Category</string>
+    <string name="create_new_task">Create New Task</string>
+    <string-array name="spinner_items">
+        <item>Day</item>
+        <item>Week</item>
+        <item>Month</item>
+        <item>Family</item>
+        <item>Work</item>
+    </string-array>
 </resources>

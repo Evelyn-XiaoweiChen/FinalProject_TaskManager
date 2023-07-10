@@ -1,14 +1,16 @@
-package ca.xiaowei.chen2267127;
+package ca.xiaowei.chen2267127.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class ProfileActivity extends AppCompatActivity {
+import ca.xiaowei.chen2267127.R;
+
+public class SearchActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_search);
     }
 }
