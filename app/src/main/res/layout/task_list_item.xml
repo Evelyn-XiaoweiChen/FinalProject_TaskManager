@@ -7,7 +7,12 @@
     android:padding="16dp"
     android:layout_gravity="fill_horizontal" >
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/lavender"
+        android:padding="16dp">
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
         android:orientation="vertical">
@@ -18,7 +23,7 @@
             android:text="N/A"
             android:textSize="20sp"
             android:textColor="@color/black"
-            android:layout_weight="1"/>
+           />
         <TextView
             android:id="@+id/taskCategory"
             android:layout_width="wrap_content"
@@ -26,16 +31,20 @@
             android:text="N/A"
             android:textSize="16sp"
             android:textColor="@color/black"
-            android:layout_weight="1"/>
+            />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/editIconImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:src="@drawable/baseline_edit_24"
         android:contentDescription="@string/edit_icon"
         android:layout_marginStart="8dp"/>
+</LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lavender" />
 
 </LinearLayout>

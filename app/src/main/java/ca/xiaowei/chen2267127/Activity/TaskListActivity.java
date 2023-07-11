@@ -129,24 +129,17 @@ public class TaskListActivity extends AppCompatActivity {
 
     private void populateTaskList() {
         // Retrieve the list of tasks from your data source (e.g., database or API)
-        List<Task> taskList = getTasks();
+        List<Task> taskList = taskDAO.getAllTasks();
 
         // Update the task list in the adapter
         taskListAdapter.setTaskList(taskList);
         taskListAdapter.notifyDataSetChanged();
     }
 
-    // Method to retrieve tasks from your data source
-    private List<Task> getTasks() {
-        // Implement your logic to fetch tasks from a data source (e.g., database or API)
-        // Return the list of tasks
-        return new ArrayList<Task>(); // Replace with your actual data retrieval logic
-    }
 
     private void showTaskFormDialog() {
         // Create a dialog builder
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add Task");
 
         // Inflate the layout for the dialog
         View view = LayoutInflater.from(this).inflate(R.layout.create_task_form, null);
@@ -175,9 +168,7 @@ public class TaskListActivity extends AppCompatActivity {
                 taskDAO.addTask(newTask);
 
                 // Update the task list in the adapter
-                List<Task> updatedTaskList = taskDAO.getAllTasks();
-                taskListAdapter.setTaskList(updatedTaskList);
-                taskListAdapter.notifyDataSetChanged();
+              populateTaskList();
             }
         });
 
