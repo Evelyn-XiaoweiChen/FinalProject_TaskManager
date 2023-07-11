@@ -1,8 +1,11 @@
 package ca.xiaowei.chen2267127.CRUD;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import ca.xiaowei.chen2267127.Model.Task;
 
 public class DBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "task_database";
@@ -20,6 +23,8 @@ public class DBHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_TASK);
@@ -31,4 +36,5 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + DBContract.TaskEntry.TABLE_NAME);
         onCreate(db);
     }
+
 }

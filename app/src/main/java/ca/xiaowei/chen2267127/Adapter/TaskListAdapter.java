@@ -70,6 +70,15 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
                 return true;
             }
         });
+
+        holder.editIconImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onEditClickListener != null) {
+                    onEditClickListener.onEditClick(task);
+                }
+            }
+        });
     }
 
     @Override
@@ -131,4 +140,5 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
     public void setTaskList(List<Task> taskList){
         this.taskList = taskList;
     }
+
 }

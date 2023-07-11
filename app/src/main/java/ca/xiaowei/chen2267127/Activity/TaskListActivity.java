@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,6 +45,7 @@ public class TaskListActivity extends AppCompatActivity {
         initialize();
         setupRecyclerView();
         populateTaskList();
+        editTask();
 
     }
 
@@ -136,6 +136,65 @@ public class TaskListActivity extends AppCompatActivity {
         taskListAdapter.notifyDataSetChanged();
     }
 
+    private void editTask(){
+        taskListAdapter.setOnEditClickListener(new TaskListAdapter.OnEditClickListener(){
+            @Override
+            public void onEditClick(Task task) {
+                showUpdateTaskDialog(task);
+            }
+        });
+}
+
+    private void showUpdateTaskDialog(Task task) {
+        // Create a dialog builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // Inflate the layout for the dialog
+        View view = LayoutInflater.from(this).inflate(R.layout.edit_task_dialog, null);
+        builder.setView(view);
+
+        // Get references to the views in the dialog
+        EditText taskTitle = view.findViewById(R.id.updateTitle);
+        EditText taskCategory = view.findViewById(R.id.updateCategory);
+        EditText taskAddress = view.findViewById(R.id.updateAddress);
+        EditText taskNotes = view.findViewById(R.id.updateNotes);
+
+        // Set the initial values for the EditText fields
+        taskTitle.setText(task.getTitle());
+        taskCategory.setText(task.getCategory());
+        taskAddress.setText(task.getAddress());
+        taskNotes.setText(task.getNotes());
+
+        builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Retrieve the updated task information from the EditText fields
+                String updatedTitle = taskTitle.getText().toString();
+                String updatedCategory = taskCategory.getText().toString();
+                String updatedAddress = taskAddress.getText().toString();
+                String updatedNotes = taskNotes.getText().toString();
+
+                // Update the task object with the new information
+                task.setTitle(updatedTitle);
+                task.setCategory(updatedCategory);
+                task.setAddress(updatedAddress);
+                task.setNotes(updatedNotes);
+
+                // Perform the update operation in the database
+                taskDAO.updateTask(task);
+
+                // Refresh the task list
+                populateTaskList();
+
+                Toast.makeText(TaskListActivity.this, "Task updated successfully", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
     private void showTaskFormDialog() {
         // Create a dialog builder

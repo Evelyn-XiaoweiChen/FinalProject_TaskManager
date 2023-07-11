@@ -23,6 +23,7 @@
     <string name="title">Title</string>
     <string name="category">Category</string>
     <string name="create_new_task">Create New Task</string>
+    <string name="update_task">Update Task</string>
     <string-array name="spinner_items">
         <item>Day</item>
         <item>Week</item>
