@@ -24,6 +24,10 @@
     <string name="category">Category</string>
     <string name="create_new_task">Create New Task</string>
     <string name="update_task">Update Task</string>
+    <string name="search">Search</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="john_doe_example_com">john.doe@example.com</string>
+    <string name="john_doe">John Doe</string>
     <string-array name="spinner_items">
         <item>Day</item>
         <item>Week</item>

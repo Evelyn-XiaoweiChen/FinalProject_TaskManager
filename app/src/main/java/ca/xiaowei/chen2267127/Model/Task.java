@@ -6,6 +6,7 @@ public class Task {
     private String category;
     private String address;
     private String notes;
+    private Boolean completion;
 
     public Task(String title,String category,String address,String notes) {
         this.title = title;
@@ -53,6 +54,14 @@ public class Task {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public Boolean getCompletion() {
+        return completion;
+    }
+
+    public void setCompletion(Boolean completion) {
+        this.completion = completion;
     }
 
     @Override
