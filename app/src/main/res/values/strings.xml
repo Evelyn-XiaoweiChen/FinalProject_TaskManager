@@ -28,6 +28,9 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="john_doe_example_com">john.doe@example.com</string>
     <string name="john_doe">John Doe</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
     <string-array name="spinner_items">
         <item>Day</item>
         <item>Week</item>
