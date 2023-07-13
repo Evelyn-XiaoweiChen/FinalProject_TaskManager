@@ -19,7 +19,9 @@
             android:gravity="center"
             android:textSize="25sp"
             android:textStyle="bold"
-            android:layout_marginVertical="40dp"/>
+            android:layout_marginStart="40dp"
+            android:layout_marginVertical="40dp"
+            />
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -46,7 +48,7 @@
             android:layout_weight="2"
             android:layout_height="wrap_content"
             android:text="@string/total_number_of_tasks"
-            android:gravity="center"
+            android:layout_marginStart="20dp"
             android:textSize="20sp"
             android:textStyle="bold"
             />
@@ -69,7 +71,7 @@
             android:layout_weight="2"
             android:layout_height="wrap_content"
             android:text="@string/upcoming_task"
-            android:gravity="center"
+           android:layout_marginStart="20dp"
             android:textSize="20sp"
             android:textStyle="bold"/>
         <TextView
@@ -91,7 +93,7 @@
             android:layout_weight="2"
             android:layout_height="wrap_content"
             android:text="Note:"
-            android:gravity="center"
+            android:layout_marginStart="20dp"
             android:textSize="20sp"
             android:textStyle="bold"/>
         <TextView
@@ -119,8 +121,6 @@
     app:itemIconTint="@drawable/item_selector"
     app:itemRippleColor="@android:color/transparent"
     app:labelVisibilityMode="unlabeled" />
-
-
 
 
 </LinearLayout>
