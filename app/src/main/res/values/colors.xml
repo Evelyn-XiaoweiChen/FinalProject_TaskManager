@@ -6,4 +6,6 @@
     <color name="lavender">#8692f7</color>
     <color name="grey">#d2d2d2</color>
     <color name="bottom_icon_color">#FFFFFF</color>
+    <color name="green">#8cd7b9</color>
+    <color name="darkgreen">#75c4b1</color>
 </resources>

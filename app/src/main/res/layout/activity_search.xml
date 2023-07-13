@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:padding="16dp"
     android:orientation="vertical"
-    tools:context=".Activity.SearchActivity">
+    tools:context=".Activity.SearchActivity"
+    android:background="@drawable/blue">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

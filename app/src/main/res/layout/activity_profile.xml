@@ -5,7 +5,8 @@
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity.ProfileActivity">
+    tools:context=".Activity.ProfileActivity"
+    android:background="@drawable/blue">
 
     <LinearLayout
         android:layout_width="match_parent"
