@@ -1,26 +1,45 @@
 package ca.xiaowei.chen2267127.Model;
 
+import java.util.Date;
+
+import java.sql.Time;
+
+
 public class Task {
-    private int id;
+    private String id;
+    private String userId;
     private String title;
     private String category;
     private String address;
     private String notes;
-    private Boolean completion;
+    private Date date;
+    private Time time;
 
-    public Task(String title,String category,String address,String notes) {
+    public Task(String id,String userId,String title,String category,String address,String notes,Date date, Time time) {
+        this.id = id;
         this.title = title;
+        this.userId = userId;
         this.category = category;
         this.address = address;
         this.notes = notes;
+        this.date = date;
+        this.time = time;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getCategory() {
@@ -56,14 +75,21 @@ public class Task {
         this.notes = notes;
     }
 
-    public Boolean getCompletion() {
-        return completion;
+    public Date getDate() {
+        return date;
     }
 
-    public void setCompletion(Boolean completion) {
-        this.completion = completion;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
+    public Time getTime() {
+        return time;
+    }
+
+    public void setTime(Time time) {
+        this.time = time;
+    }
     @Override
     public String toString() {
         return "Task{" +

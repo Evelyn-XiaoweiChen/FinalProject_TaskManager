@@ -1,5 +1,6 @@
 package ca.xiaowei.chen2267127.Activity;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -8,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +22,20 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import ca.xiaowei.chen2267127.Adapter.TaskListAdapter;
 import ca.xiaowei.chen2267127.CRUD.TaskDAO;
@@ -29,24 +43,42 @@ import ca.xiaowei.chen2267127.Model.Task;
 import ca.xiaowei.chen2267127.R;
 
 public class TaskListActivity extends AppCompatActivity {
+    private static final int CREATE_TASK_REQUEST_CODE = 1;
     DrawerLayout drawerLayout;
     ImageView menu;
     LinearLayout home, profile, logout;
     RecyclerView recyclerView;
     TaskListAdapter taskListAdapter;
     FloatingActionButton createTaskBtn;
-    EditText taskTitle, taskCategory, taskAddress, taskNotes;
     TaskDAO taskDAO;
+    FirebaseFirestore firestoreDB;
+    FirebaseAuth auth;
+    FirebaseUser user;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_list);
         initialize();
+
+
+        firestoreDB = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+
+        if (user != null) {
+            // User is signed in
+            userId = user.getUid();
+            // Store the userId in Firestore or use it as needed
+        } else {
+            // User is not signed in or an error occurred
+            // Handle the case accordingly
+        }
         setupRecyclerView();
-        populateTaskList();
         editTask();
 
+        populateTaskList();
     }
 
     public void initialize() {
@@ -88,17 +120,33 @@ public class TaskListActivity extends AppCompatActivity {
         createTaskBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showTaskFormDialog();
+                Intent intent = new Intent(TaskListActivity.this, CreateTaskActivity.class);
+                intent.putExtra("userId", userId);
+                startActivity(intent);
             }
         });
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CREATE_TASK_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            boolean isNewTaskAdded = data.getBooleanExtra("isNewTaskAdded", false);
+            if (isNewTaskAdded) {
+                // Refresh the task list
+                populateTaskList();
+            }
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         // Close the taskDAO object to release any resources
         taskDAO.close();
     }
+
     public static void openDrawer(DrawerLayout drawerLayout) {
         drawerLayout.openDrawer(GravityCompat.START);
     }
@@ -121,14 +169,33 @@ public class TaskListActivity extends AppCompatActivity {
         super.onPause();
         closeDrawer(drawerLayout);
     }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        populateTaskList();
+    }
     private void setupRecyclerView() {
         taskListAdapter = new TaskListAdapter(new ArrayList<Task>(), this);
         recyclerView.setAdapter(taskListAdapter);
     }
 
     private void populateTaskList() {
-        // Retrieve the list of tasks from your data source (e.g., database or API)
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() != null
+                && connectivityManager.getActiveNetworkInfo().isConnected()) {
+            // Device is connected to the internet, fetch task list from Firestore
+             getTaskListFromFirestore();
+        } else {
+            // Device is not connected to the internet, fetch task list from the local database
+            getTaskListFromDatabase();
+        }
+
+    }
+
+    private void getTaskListFromDatabase() {
+     // Retrieve the list of tasks from your data source (e.g., database or API)
         List<Task> taskList = taskDAO.getAllTasks();
 
         // Update the task list in the adapter
@@ -136,14 +203,59 @@ public class TaskListActivity extends AppCompatActivity {
         taskListAdapter.notifyDataSetChanged();
     }
 
-    private void editTask(){
-        taskListAdapter.setOnEditClickListener(new TaskListAdapter.OnEditClickListener(){
+    private void getTaskListFromFirestore() {
+        List<Task> taskList = new ArrayList<>();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            String loggedInUserId = currentUser.getUid();
+
+            FirebaseFirestore firestoreDB = FirebaseFirestore.getInstance();
+            CollectionReference tasksCollection = firestoreDB.collection("tasks");
+
+            Query query = tasksCollection.whereEqualTo("userId", loggedInUserId);
+
+            query.get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            String taskId = documentSnapshot.getId();
+                            String userId = documentSnapshot.getString("userId");
+                            String title = documentSnapshot.getString("title");
+                            String category = documentSnapshot.getString("category");
+                            String address = documentSnapshot.getString("address");
+                            String notes = documentSnapshot.getString("notes");
+                            Timestamp timestamp = documentSnapshot.getTimestamp("date");
+
+                            // Convert Firestore timestamp to Date
+                            Date date = timestamp != null ? timestamp.toDate() : null;
+
+                            Task task = new Task(taskId, userId, title, category, address, notes, date, null);
+                            taskList.add(task);
+                        }
+
+                        // Update the task list in the adapter
+                        taskListAdapter.setTaskList(taskList);
+                        taskListAdapter.notifyDataSetChanged();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(TaskListActivity.this, "Failed to fetch tasks from Firestore", Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            // User is not logged in, handle accordingly
+        }
+
+
+    }
+
+    private void editTask() {
+        taskListAdapter.setOnEditClickListener(new TaskListAdapter.OnEditClickListener() {
             @Override
             public void onEditClick(Task task) {
                 showUpdateTaskDialog(task);
             }
         });
-}
+    }
 
     private void showUpdateTaskDialog(Task task) {
         // Create a dialog builder
@@ -180,8 +292,10 @@ public class TaskListActivity extends AppCompatActivity {
                 task.setAddress(updatedAddress);
                 task.setNotes(updatedNotes);
 
-                // Perform the update operation in the database
+                // Perform the update operation in the local storage
                 taskDAO.updateTask(task);
+                // Update the task in Firestore
+                updateTaskInFirestore(task);
 
                 // Refresh the task list
                 populateTaskList();
@@ -196,53 +310,19 @@ public class TaskListActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void showTaskFormDialog() {
-        // Create a dialog builder
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    private void updateTaskInFirestore(Task task) {
+        // Get a reference to the task document in Firestore
+        DocumentReference taskDocument = firestoreDB.collection("tasks").document(task.getId());
 
-        // Inflate the layout for the dialog
-        View view = LayoutInflater.from(this).inflate(R.layout.create_task_form, null);
-        builder.setView(view);
-
-        // Get references to the views in the dialog
-        taskTitle = view.findViewById(R.id.taskFormTitle);
-        taskCategory = view.findViewById(R.id.taskFormCategory);
-        taskAddress = view.findViewById(R.id.taskFormAddress);
-        taskNotes = view.findViewById(R.id.taskFormNotes);
-
-        // Set up the dialog buttons
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Retrieve the task information from the EditText fields
-                String title = taskTitle.getText().toString();
-                String category = taskCategory.getText().toString();
-                String address = taskAddress.getText().toString();
-                String notes = taskNotes.getText().toString();
-
-                // Create a new Task object with the gathered information
-                Task newTask = new Task(title, category, address, notes);
-
-                // Add the new task to your data source (e.g., database or API)
-                taskDAO.addTask(newTask);
-
-                // Update the task list in the adapter
-              populateTaskList();
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        // Create and show the dialog
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
+        // Update the task document in Firestore
+        taskDocument.set(task)
+                .addOnSuccessListener(aVoid -> {
+                    // Task successfully updated in Firestore
+                })
+                .addOnFailureListener(e -> {
+                    // Handle any errors that occurred during the update operation
+                    Toast.makeText(TaskListActivity.this, "Failed to update task in Firestore", Toast.LENGTH_SHORT).show();
+                });
     }
-
 
 }

@@ -13,30 +13,46 @@
         android:layout_marginVertical="20dp"/>
 
     <EditText
-        android:id="@+id/taskFormTitle"
+        android:id="@+id/Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/title" />
 
     <EditText
-        android:id="@+id/taskFormCategory"
+        android:id="@+id/tasky"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/category"
         android:layout_marginTop="8dp" />
 
     <EditText
-        android:id="@+id/taskFormAddress"
+        android:id="@+id/taskFor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Address"
+        android:hint="@string/address"
         android:layout_marginTop="8dp" />
     <EditText
-        android:id="@+id/taskFormNotes"
+        android:id="@+id/taskForm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Notes"
+        android:hint="@string/notes"
         android:layout_marginTop="8dp" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_date"
+        android:id="@+id/selectDate"
+        android:layout_marginTop="10dp"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_time"
+        android:id="@+id/select"
+        android:layout_marginTop="10dp"/>
+
+
+
 
 
 </LinearLayout>

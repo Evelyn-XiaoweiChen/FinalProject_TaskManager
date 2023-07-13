@@ -14,6 +14,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.List;
 
 import ca.xiaowei.chen2267127.Activity.DetailTaskActivity;
@@ -26,6 +30,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
     private Context context;
     private OnEditClickListener onEditClickListener;
     private TaskDAO taskDAO;
+
     public interface OnEditClickListener {
         void onEditClick(Task task);
     }
@@ -58,6 +63,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
             public void onClick(View v) {
                 // Open detail task activity
                 Intent intent = new Intent(context, DetailTaskActivity.class);
+
+                System.out.println("adapter taskId"+task.getId());
                 intent.putExtra("taskId", task.getId());
                 context.startActivity(intent);
             }
@@ -104,8 +111,11 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
                 // Refresh the task list from the database
                 List<Task> updatedTaskList = taskDAO.getAllTasks();
                 setTaskList(updatedTaskList);
-                notifyDataSetChanged();
-               // taskDAO.close();
+
+                //delete from firestore
+                deleteTaskFromFirestore(task);
+
+
             }
         });
 
@@ -113,6 +123,25 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+    public void deleteTaskFromFirestore(Task task){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("tasks").document(task.getId()).delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Document successfully deleted
+                        // Perform any additional operations or UI updates
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // An error occurred while deleting the document
+                        // Handle the error appropriately
+                    }
+                });
+        notifyDataSetChanged();
     }
     public class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;

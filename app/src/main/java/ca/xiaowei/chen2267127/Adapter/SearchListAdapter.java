@@ -10,7 +10,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+
+import com.google.firebase.Timestamp;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,6 +47,14 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Ta
         final Task task = filteredTaskList.get(position);
         holder.titleTextView.setText(task.getTitle());
         holder.categoryTextView.setText(task.getCategory());
+
+        // Convert Firestore timestamp to Date
+//        Timestamp timestamp =  task.getDate();
+//        Date date = timestamp.toDate();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String formattedDate = dateFormat.format(task.getDate());
+        holder.dateTextView.setText(formattedDate);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,13 +97,13 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Ta
     public class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
         TextView categoryTextView;
-        TextView completeTextView;
+        TextView dateTextView;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.textTitle);
             categoryTextView = itemView.findViewById(R.id.textCategory);
-            completeTextView = itemView.findViewById(R.id.textCompletionStatus);
+            dateTextView = itemView.findViewById(R.id.textDate);
         }
     }
 }
