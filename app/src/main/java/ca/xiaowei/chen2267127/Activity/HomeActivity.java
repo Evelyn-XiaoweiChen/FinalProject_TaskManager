@@ -3,14 +3,17 @@ package ca.xiaowei.chen2267127.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,7 +23,17 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,10 +45,14 @@ import ca.xiaowei.chen2267127.Model.Task;
 public class HomeActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     FirebaseFirestore mFirestore;
-    TextView usernameTextView;
-    TextView totalTasksTextView,upcomingTaskTextView,notesTextView;
+    TextView usernameTextView, weatherTextView, cityTextView;
+    TextView totalTasksTextView, upcomingTaskTextView, notesTextView;
+    ImageView weatherIconImageView;
     Spinner categorySpinner;
     String selectedCategory = "";
+    private static final String API_KEY = "a15c30671e264bbc86d01146231407";
+    private static final String API_URL = "https://api.weatherapi.com/v1/current.json?key=" + API_KEY + "&q=%s";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,15 +63,22 @@ public class HomeActivity extends AppCompatActivity {
         countTaskNumberFromFirestore();
         displayLatestTaskFromFirestore();
         bottomBarNavigate();
+        // Execute the API request in a background thread
+        new FetchWeatherTask().execute();
     }
 
     private void initializeFirebaseAuth() {
         mAuth = FirebaseAuth.getInstance();
     }
+
     private void initializeFirestore() {
         mFirestore = FirebaseFirestore.getInstance();
     }
-    public void initialize(){
+
+    public void initialize() {
+        cityTextView = findViewById(R.id.cityTextView);
+        weatherTextView = findViewById(R.id.weatherTextView);
+        weatherIconImageView = findViewById(R.id.weatherIconImageView);
         usernameTextView = findViewById(R.id.home_username);
         totalTasksTextView = findViewById(R.id.home_taskNumber);
         upcomingTaskTextView = findViewById(R.id.home_upcomingTask);
@@ -78,6 +102,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
+
     private void updateUI(String selectedCategory) {
         if ("All".equals(selectedCategory)) {
             // Show total number, upcoming task, and notes for all categories
@@ -114,6 +139,7 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
     }
+
     private void countTaskNumberFromFirestore(String selectedCategory) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -142,6 +168,7 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
     }
+
     private void displayLatestTaskFromFirestore() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -266,6 +293,7 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
     }
+
     public void bottomBarNavigate() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomBar);
         bottomNavigationView.setSelectedItemId(R.id.bottom_home);
@@ -292,5 +320,110 @@ public class HomeActivity extends AppCompatActivity {
 
             return false;
         });
+    }
+
+    private class FetchWeatherTask extends AsyncTask<Void, Void, WeatherData> {
+        private String cityName = "Montreal";
+
+        @Override
+        protected WeatherData doInBackground(Void... voids) {
+            try {
+                String apiUrl = String.format(API_URL, cityName);
+
+                // Create a URL object with the API URL
+                URL url = new URL(apiUrl);
+
+                // Create an HttpURLConnection
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                // Set the request method to GET
+                connection.setRequestMethod("GET");
+
+                // Get the response code
+                int responseCode = connection.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Read the response
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+
+                    // Close the reader and connection
+                    reader.close();
+                    connection.disconnect();
+
+                    // Parse the response
+                    return parseWeatherData(response.toString());
+                } else {
+                    // Handle the error response
+                    // ...
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(WeatherData weatherData) {
+            if (weatherData != null) {
+                // Display the weather data
+                weatherTextView.setText("Temperature: " + weatherData.getTemperature() + "°C");
+                cityTextView.setText("City: " + cityName);
+                // Load the weather icon using a library like Picasso, Glide, or similar
+                Picasso.get().load(weatherData.getIconUrl()).into(weatherIconImageView);
+            } else {
+                // Handle the error case
+                // ...
+            }
+        }
+
+        private WeatherData parseWeatherData(String response) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                JSONObject current = jsonObject.getJSONObject("current");
+                double temperature = current.getDouble("temp_c");
+
+                JSONObject condition = current.getJSONObject("condition");
+                String icon = condition.getString("icon");
+// Construct the complete icon URL
+                String iconUrl = "https:" + icon;
+                // Return the weather data
+                return new WeatherData(temperature, iconUrl, cityName);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+    private static class WeatherData {
+        private final double temperature;
+        private final String iconUrl;
+        private final String cityName;
+
+        public WeatherData(double temperature, String iconUrl, String cityName) {
+            this.temperature = temperature;
+            this.iconUrl = iconUrl;
+            this.cityName = cityName;
+        }
+
+        public double getTemperature() {
+            return temperature;
+        }
+
+        public String getIconUrl() {
+            return iconUrl;
+        }
+
+        public String getCityName() {
+            return cityName;
+        }
     }
 }
